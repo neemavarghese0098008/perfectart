@@ -10,7 +10,7 @@ const initialProjects = [
     title: 'Brands for Less - Store',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/brands_for_less_store.jpeg',
+    img: '/assets/img/projects/brands_for_less_store.jpeg',
     featured: 1
   },
   {
@@ -20,7 +20,7 @@ const initialProjects = [
     title: 'Gymnation - Female Gym',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/gymnation_female_gym.jpeg',
+    img: '/assets/img/projects/gymnation_female_gym.jpeg',
     featured: 0
   },
   {
@@ -30,7 +30,7 @@ const initialProjects = [
     title: 'Gymnation - Male Gym',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/gymnation_male_gym.jpeg',
+    img: '/assets/img/projects/gymnation_male_gym.jpeg',
     featured: 0
   },
   {
@@ -40,7 +40,7 @@ const initialProjects = [
     title: 'Villa Works Luxury Interior',
     place: 'Al Hada District, Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/villa_works.jpg',
+    img: '/assets/img/projects/villa_works.jpg',
     featured: 0
   },
   {
@@ -50,7 +50,7 @@ const initialProjects = [
     title: 'Steve Madden',
     place: 'Kingdom Centre Mall, Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/steve_madden.jpg',
+    img: '/assets/img/projects/steve_madden.jpg',
     featured: 0
   },
   {
@@ -60,7 +60,7 @@ const initialProjects = [
     title: 'Home Box',
     place: 'Sahara Mall, Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/home_box.jpg',
+    img: '/assets/img/projects/home_box.jpg',
     featured: 0
   },
   {
@@ -70,7 +70,7 @@ const initialProjects = [
     title: 'Koton',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/koton.jpg',
+    img: '/assets/img/projects/koton.jpg',
     featured: 0
   },
   {
@@ -80,7 +80,7 @@ const initialProjects = [
     title: 'Max Fashion Store',
     place: 'Thumama, Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/max.jpg',
+    img: '/assets/img/projects/max.jpg',
     featured: 0
   },
   {
@@ -90,7 +90,7 @@ const initialProjects = [
     title: 'Health Club & Hotel Fit-Out Marriott',
     place: 'Riyadh Marriott Hotel, Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/health_club_marriott.jpg',
+    img: '/assets/img/projects/health_club_marriott.jpg',
     featured: 0
   },
   {
@@ -100,7 +100,7 @@ const initialProjects = [
     title: 'Brands For Less Group - E-Commerce Office',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/bfl_ecommerce_office.jpg',
+    img: '/assets/img/projects/bfl_ecommerce_office.jpg',
     featured: 1
   },
   {
@@ -110,7 +110,7 @@ const initialProjects = [
     title: 'Brands For Less - Retail',
     place: 'Jeddah',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/brands_for_less_retail.jpeg',
+    img: '/assets/img/projects/brands_for_less_retail.jpeg',
     featured: 0
   },
   {
@@ -120,7 +120,7 @@ const initialProjects = [
     title: 'Landmark Arabia (Nando’s)',
     place: 'Boulevard City, Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/landmark_arabia_nandos.jpg',
+    img: '/assets/img/projects/landmark_arabia_nandos.jpg',
     featured: 0
   },
   {
@@ -130,7 +130,7 @@ const initialProjects = [
     title: 'Tim Horton’s Cafe',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/tim_hortons.jpg',
+    img: '/assets/img/projects/tim_hortons.jpg',
     featured: 0
   },
   {
@@ -140,7 +140,7 @@ const initialProjects = [
     title: 'Fitness First (Ladies)',
     place: 'Riyadh',
     country: 'Saudi Arabia',
-    img: '/reactdemo/assets/img/projects/fitness_first_ladies.png',
+    img: '/assets/img/projects/fitness_first_ladies.png',
     featured: 1
   }
 ];
@@ -170,36 +170,36 @@ const initialArticles = [
   {
     title: "Vision 2030 and the Interior Fit-Out Boom: What Saudi Arabia's Construction Market Looks Like Right Now",
     date: 'Aug 27, 2025',
-    img: '/reactdemo/assets/img/blog/blog_1_1.jpg',
+    img: '/assets/img/blog/blog_1_1.jpg',
     description: "An in-depth analysis of Saudi Arabia's booming construction and fit-out landscape under Vision 2030, highlighting giga-projects, hospitality expansion, and corporate headquarters demand in Riyadh.",
     status: 'published'
   },
   {
     title: 'Custom Interiors and Furniture in Riyadh: Designed for Your Home, Built in Our Own Workshop',
     date: 'Aug 27, 2025',
-    img: '/reactdemo/assets/img/blog/blog_1_2.jpg',
+    img: '/assets/img/blog/blog_1_2.jpg',
     description: 'How our dedicated PACE Joinery and Woodworking Workshop in Riyadh manufactures custom cabinetry, bespoke furniture, and precision architectural millwork with zero supply chain delays.',
     status: 'published'
   }
 ];
 
 const initialGallery = [
-  { cat: 'fitout', src: '/reactdemo/assets/img/gallery/gallery_2_1.jpg', title: 'Luxury Commercial Fit-Out' },
-  { cat: 'fitout', src: '/reactdemo/assets/img/gallery/gallery_2_2.jpg', title: 'Interior Architecture Execution' },
-  { cat: 'corporate', src: '/reactdemo/assets/img/gallery/gallery_2_3.jpg', title: 'Corporate Headquarters Office' },
-  { cat: 'corporate', src: '/reactdemo/assets/img/gallery/gallery_2_4.jpg', title: 'Executive Boardroom Interiors' },
-  { cat: 'retail', src: '/reactdemo/assets/img/gallery/gallery_2_5.jpg', title: 'Retail Storefront & Joinery' },
-  { cat: 'retail', src: '/reactdemo/assets/img/gallery/gallery_2_6.jpg', title: 'F&B Dining Space Fit-Out' },
-  { cat: 'villa', src: '/reactdemo/assets/img/gallery/gallery_2_7.jpg', title: 'Custom Villa Living Interior' },
-  { cat: 'villa', src: '/reactdemo/assets/img/gallery/gallery_2_8.jpg', title: 'Master Bedroom Custom Cabinetry' },
-  { cat: 'fitout', src: '/reactdemo/assets/img/gallery/gallery_2_9.jpg', title: 'Acoustic Ceiling & Lighting' },
-  { cat: 'corporate', src: '/reactdemo/assets/img/gallery/gallery_5_1.jpg', title: 'Modern Office Reception Area' },
-  { cat: 'retail', src: '/reactdemo/assets/img/gallery/gallery_5_2.jpg', title: 'High-End Retail Display Cabinets' },
-  { cat: 'villa', src: '/reactdemo/assets/img/gallery/gallery_5_3.jpg', title: 'Private Villa Bespoke Kitchen' },
-  { cat: 'fitout', src: '/reactdemo/assets/img/gallery/gallery_7_1.jpg', title: 'Health Club & Spa Interior' },
-  { cat: 'corporate', src: '/reactdemo/assets/img/gallery/gallery_7_2.jpg', title: 'Executive Conference Suite' },
-  { cat: 'retail', src: '/reactdemo/assets/img/gallery/gallery_8_1.jpg', title: 'Boutique Showroom Fit-Out' },
-  { cat: 'villa', src: '/reactdemo/assets/img/gallery/gallery_9_1.jpg', title: 'Luxury Residential Dining Concept' }
+  { cat: 'fitout', src: '/assets/img/gallery/gallery_2_1.jpg', title: 'Luxury Commercial Fit-Out' },
+  { cat: 'fitout', src: '/assets/img/gallery/gallery_2_2.jpg', title: 'Interior Architecture Execution' },
+  { cat: 'corporate', src: '/assets/img/gallery/gallery_2_3.jpg', title: 'Corporate Headquarters Office' },
+  { cat: 'corporate', src: '/assets/img/gallery/gallery_2_4.jpg', title: 'Executive Boardroom Interiors' },
+  { cat: 'retail', src: '/assets/img/gallery/gallery_2_5.jpg', title: 'Retail Storefront & Joinery' },
+  { cat: 'retail', src: '/assets/img/gallery/gallery_2_6.jpg', title: 'F&B Dining Space Fit-Out' },
+  { cat: 'villa', src: '/assets/img/gallery/gallery_2_7.jpg', title: 'Custom Villa Living Interior' },
+  { cat: 'villa', src: '/assets/img/gallery/gallery_2_8.jpg', title: 'Master Bedroom Custom Cabinetry' },
+  { cat: 'fitout', src: '/assets/img/gallery/gallery_2_9.jpg', title: 'Acoustic Ceiling & Lighting' },
+  { cat: 'corporate', src: '/assets/img/gallery/gallery_5_1.jpg', title: 'Modern Office Reception Area' },
+  { cat: 'retail', src: '/assets/img/gallery/gallery_5_2.jpg', title: 'High-End Retail Display Cabinets' },
+  { cat: 'villa', src: '/assets/img/gallery/gallery_5_3.jpg', title: 'Private Villa Bespoke Kitchen' },
+  { cat: 'fitout', src: '/assets/img/gallery/gallery_7_1.jpg', title: 'Health Club & Spa Interior' },
+  { cat: 'corporate', src: '/assets/img/gallery/gallery_7_2.jpg', title: 'Executive Conference Suite' },
+  { cat: 'retail', src: '/assets/img/gallery/gallery_8_1.jpg', title: 'Boutique Showroom Fit-Out' },
+  { cat: 'villa', src: '/assets/img/gallery/gallery_9_1.jpg', title: 'Luxury Residential Dining Concept' }
 ];
 
 export const seedDatabase = async () => {
@@ -207,15 +207,31 @@ export const seedDatabase = async () => {
   await initSchema();
 
   // 1. Seed Admin
-  const adminExists = await dbGet('SELECT * FROM admins WHERE username = ?', ['admin']);
+  const adminUsername = process.env.ADMIN_USERNAME;
+  const adminEmail = process.env.ADMIN_EMAIL;
+  const adminPassword = process.env.ADMIN_PASSWORD;
+  const adminName = process.env.ADMIN_NAME;
+  const adminRole = process.env.ADMIN_ROLE || 'admin';
+
+  if (!adminUsername || !adminEmail || !adminPassword || !adminName) {
+    throw new Error('ADMIN_USERNAME, ADMIN_EMAIL, ADMIN_PASSWORD, and ADMIN_NAME must be configured in backend/.env');
+  }
+
+  const adminExists = await dbGet('SELECT * FROM admins WHERE username = ? OR email = ?', [adminUsername, adminEmail]);
   if (!adminExists) {
     console.log('Creating default admin account...');
-    const hash = await bcrypt.hash('Admin@12345', 10);
+    const hash = await bcrypt.hash(adminPassword, 12);
     await dbRun(
       'INSERT INTO admins (username, email, password_hash, name, role) VALUES (?, ?, ?, ?, ?)',
-      ['admin', 'admin@perfectartcontracting.com', hash, 'Perfect Art Admin', 'superadmin']
+      [adminUsername, adminEmail, hash, adminName, adminRole]
     );
-    console.log('Default admin created: username = admin, password = Admin@12345');
+    console.log('Admin account created from backend environment configuration.');
+  } else {
+    const hash = await bcrypt.hash(adminPassword, 12);
+    await dbRun(
+      'UPDATE admins SET username = ?, email = ?, password_hash = ?, name = ?, role = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [adminUsername, adminEmail, hash, adminName, adminRole, adminExists.id]
+    );
   }
 
   // 2. Seed Projects

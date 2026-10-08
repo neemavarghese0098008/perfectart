@@ -13,21 +13,42 @@ import articleRoutes from './routes/articleRoutes.js';
 import galleryRoutes from './routes/galleryRoutes.js';
 import contactRoutes from './routes/contactRoutes.js';
 import dashboardRoutes from './routes/dashboardRoutes.js';
+import vendorRegistrationRoutes from './routes/vendorRegistrationRoutes.js';
 import { seedDatabase } from './seed.js';
-
-dotenv.config();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '.env') });
 
 const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({
-  origin: true, // Allow all origins in dev or specify CLIENT_URL
-  credentials: true
-}));
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  process.env.ADMIN_URL,
+  'http://localhost:5173',
+  'http://localhost:5174',
+  'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'http://192.168.1.6:5173',
+  'http://192.168.1.6:5174'
+].filter(Boolean);
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+
+      console.error(`CORS blocked origin: ${origin}`);
+      return callback(new Error('Origin is not allowed by CORS'));
+    },
+    credentials: true,
+    exposedHeaders: ['Content-Disposition']
+  })
+);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
@@ -37,6 +58,7 @@ const uploadsDir = path.resolve(__dirname, 'uploads');
 if (!fs.existsSync(uploadsDir)) {
   fs.mkdirSync(uploadsDir, { recursive: true });
 }
+app.use('/uploads/vendor-private', (req, res) => res.status(404).json({ success: false, message: 'Not found.' }));
 app.use('/uploads', express.static(uploadsDir));
 
 // API Routes
@@ -47,10 +69,11 @@ app.use('/api/articles', articleRoutes);
 app.use('/api/gallery', galleryRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/dashboard', dashboardRoutes);
+app.use('/api/vendor-registrations', vendorRegistrationRoutes);
 
 // Health check endpoint
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ status: 'ok', service: 'Perfect Art API', time: new Date().toISOString() });
+  res.status(200).json({ status: 'ok', service: 'Perfect Art API' });
 });
 
 // Global 404 handler for unmatched API routes
@@ -61,7 +84,7 @@ app.use('/api/*', (req, res) => {
 // Global error handler
 app.use((err, req, res, next) => {
   console.error('Unhandled server error:', err);
-  const statusCode = err.status || 500;
+  const statusCode = err.status || (err.code === 'LIMIT_FILE_SIZE' || err.code === 'LIMIT_FILE_COUNT' ? 413 : err.name === 'MulterError' ? 400 : 500);
   res.status(statusCode).json({
     success: false,
     message: err.message || 'Internal Server Error',

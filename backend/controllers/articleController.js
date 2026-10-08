@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 export const getAllArticles = async (req, res) => {
   try {
     const { status } = req.query;
-    let sql = 'SELECT * FROM articles';
+    let sql = 'SELECT id, title, slug, category, date, img, description, excerpt, status, created_at FROM articles';
     const params = [];
 
     if (status) {
@@ -17,7 +17,7 @@ export const getAllArticles = async (req, res) => {
       params.push(status);
     }
 
-    sql += ' ORDER BY order_index ASC, id DESC';
+    sql += " ORDER BY COALESCE(published_at, STR_TO_DATE(date, '%b %e, %Y'), created_at) DESC, id DESC";
     const articles = await dbQuery(sql, params);
 
     return res.status(200).json({ success: true, count: articles.length, data: articles });
@@ -29,7 +29,11 @@ export const getAllArticles = async (req, res) => {
 export const getArticleById = async (req, res) => {
   try {
     const { id } = req.params;
-    const item = await dbGet('SELECT * FROM articles WHERE id = ?', [id]);
+    let item = await dbGet('SELECT * FROM articles WHERE id = ? OR slug = ? LIMIT 1', [id, id]);
+    if (!item) {
+      const legacyRows = await dbQuery("SELECT * FROM articles WHERE slug IS NULL OR slug = ''");
+      item = legacyRows.find((row) => row.title.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') === id);
+    }
     if (!item) {
       return res.status(404).json({ success: false, message: 'Article not found.' });
     }
@@ -41,7 +45,7 @@ export const getArticleById = async (req, res) => {
 
 export const createArticle = async (req, res) => {
   try {
-    const { title, date, description, status } = req.body;
+    const { title, date, description, content, category, slug, images, status } = req.body;
 
     if (!title) {
       return res.status(400).json({ success: false, message: 'Title is required.' });
@@ -60,8 +64,8 @@ export const createArticle = async (req, res) => {
     const articleStatus = status || 'published';
 
     const result = await dbRun(
-      'INSERT INTO articles (title, date, img, description, status, updated_at) VALUES (?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
-      [title, articleDate, img, description || '', articleStatus]
+      'INSERT INTO articles (title, slug, category, date, img, description, content, images, status, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)',
+      [title, slug || title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, ''), category || null, articleDate, img, description || '', content || description || '', JSON.stringify(images ? JSON.parse(images) : []), articleStatus]
     );
 
     const created = await dbGet('SELECT * FROM articles WHERE id = ?', [result.lastID]);
@@ -74,7 +78,7 @@ export const createArticle = async (req, res) => {
 export const updateArticle = async (req, res) => {
   try {
     const { id } = req.params;
-    const { title, date, description, status } = req.body;
+    const { title, date, description, content, category, slug, images, status } = req.body;
 
     const existing = await dbGet('SELECT * FROM articles WHERE id = ?', [id]);
     if (!existing) {
@@ -93,13 +97,17 @@ export const updateArticle = async (req, res) => {
     }
 
     const aTitle = title || existing.title;
+    const aSlug = slug || aTitle.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
     const aDate = date || existing.date;
     const aDesc = description !== undefined ? description : existing.description;
+    const aContent = content !== undefined ? content : (existing.content || aDesc);
+    let articleImages = [];
+    try { articleImages = images ? JSON.parse(images) : (Array.isArray(existing.images) ? existing.images : JSON.parse(existing.images || '[]')); } catch { articleImages = []; }
     const aStatus = status || existing.status;
 
     await dbRun(
-      'UPDATE articles SET title = ?, date = ?, img = ?, description = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      [aTitle, aDate, img, aDesc, aStatus, id]
+      'UPDATE articles SET title = ?, slug = ?, category = ?, date = ?, img = ?, description = ?, content = ?, images = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [aTitle, aSlug, category !== undefined ? category : existing.category, aDate, img, aDesc, aContent, JSON.stringify(articleImages), aStatus, id]
     );
 
     const updated = await dbGet('SELECT * FROM articles WHERE id = ?', [id]);
@@ -136,3 +144,9 @@ export default {
   updateArticle,
   deleteArticle
 };
+
+
+
+
+
+

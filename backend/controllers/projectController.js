@@ -7,13 +7,17 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const CATEGORY_MAP = {
-  retail: 'Retail Outlet',
-  fnb: 'F&B',
-  corporate: 'Corporate Office',
+  retail: 'Retails and F&B', fnb: 'Retails and F&B',
+  corporate: 'Corporate Offices',
   spa: 'Health Clubs & Spa',
   hospitality: 'Hospitality',
   residential: 'Villa & Residential'
 };
+const related = (project) => {
+  try { return Array.isArray(project.images) ? project.images : JSON.parse(project.images || '[]'); }
+  catch { return []; }
+};
+const uploaded = (req, field) => req.files?.[field]?.map((file) => `/uploads/projects/${file.filename}`) || [];
 
 export const getAllProjects = async (req, res) => {
   try {
@@ -31,8 +35,8 @@ export const getAllProjects = async (req, res) => {
       params.push(featured === '1' || featured === 'true' ? 1 : 0);
     }
 
-    sql += ' ORDER BY order_index ASC, id DESC';
-    const projects = await dbQuery(sql, params);
+    sql += ' ORDER BY created_at DESC, id DESC';
+    const projects = await dbQuery(sql.replace('SELECT *', 'SELECT id, category, category_label, title, place, country, img, description, featured, order_index, created_at, updated_at'), params);
 
     return res.status(200).json({ success: true, count: projects.length, data: projects });
   } catch (error) {
@@ -45,7 +49,7 @@ export const getProjectsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
     const projects = await dbQuery(
-      'SELECT * FROM projects WHERE category = ? ORDER BY order_index ASC, id DESC',
+      'SELECT id, category, category_label, title, place, country, img, description, featured, order_index, created_at, updated_at FROM projects WHERE category = ? ORDER BY created_at DESC, id DESC',
       [category]
     );
 
@@ -82,22 +86,23 @@ export const createProject = async (req, res) => {
     }
 
     let img = '';
-    if (req.file) {
-      img = `/uploads/projects/${req.file.filename}`;
+    const main = uploaded(req, 'mainImage')[0] || uploaded(req, 'image')[0];
+    if (main) {
+      img = main;
     } else if (req.body.img) {
       img = req.body.img;
     } else {
       return res.status(400).json({ success: false, message: 'Project main image is required.' });
     }
 
-    const catLabel = category_label || CATEGORY_MAP[category] || category;
+    const catLabel = CATEGORY_MAP[category] || category_label || category;
     const isFeatured = featured === '1' || featured === 'true' || featured === 1 ? 1 : 0;
     const projectCountry = country || 'Saudi Arabia';
 
     const result = await dbRun(
-      `INSERT INTO projects (category, category_label, title, place, country, img, description, featured, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
-      [category, catLabel, title, place, projectCountry, img, description || '', isFeatured]
+      `INSERT INTO projects (category, category_label, title, place, country, img, images, description, featured, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)`,
+      [category, catLabel, title, place, projectCountry, img, JSON.stringify(uploaded(req, 'relatedImages')), description || '', isFeatured]
     );
 
     const newProject = await dbGet('SELECT * FROM projects WHERE id = ?', [result.lastID]);
@@ -124,19 +129,15 @@ export const updateProject = async (req, res) => {
     }
 
     let img = existing.img;
-    if (req.file) {
-      img = `/uploads/projects/${req.file.filename}`;
-      // Optional: Delete old image if it was in /uploads/projects/
-      if (existing.img && existing.img.startsWith('/uploads/projects/')) {
-        const oldPath = path.resolve(__dirname, '..', existing.img.replace(/^\//, ''));
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
-      }
+    const main = uploaded(req, 'mainImage')[0] || uploaded(req, 'image')[0];
+    if (main) {
+      img = main;
     } else if (req.body.img) {
       img = req.body.img;
     }
 
     const cat = category || existing.category;
-    const catLabel = category_label || CATEGORY_MAP[cat] || existing.category_label;
+    const catLabel = CATEGORY_MAP[cat] || category_label || existing.category_label;
     const projTitle = title || existing.title;
     const projPlace = place || existing.place;
     const projCountry = country || existing.country;
@@ -144,12 +145,16 @@ export const updateProject = async (req, res) => {
     const isFeatured = featured !== undefined
       ? (featured === '1' || featured === 'true' || featured === 1 ? 1 : 0)
       : existing.featured;
+    const existingImages = related(existing);
+    const removeImages = (() => { try { return JSON.parse(req.body.removeImages || '[]'); } catch { return []; } })();
+    const keptImages = existingImages.filter((image) => !removeImages.includes(image));
+    const images = [...keptImages, ...uploaded(req, 'relatedImages')];
 
     await dbRun(
       `UPDATE projects 
-       SET category = ?, category_label = ?, title = ?, place = ?, country = ?, img = ?, description = ?, featured = ?, updated_at = CURRENT_TIMESTAMP
+       SET category = ?, category_label = ?, title = ?, place = ?, country = ?, img = ?, images = ?, description = ?, featured = ?, updated_at = CURRENT_TIMESTAMP
        WHERE id = ?`,
-      [cat, catLabel, projTitle, projPlace, projCountry, img, projDesc, isFeatured, id]
+      [cat, catLabel, projTitle, projPlace, projCountry, img, JSON.stringify(images), projDesc, isFeatured, id]
     );
 
     const updated = await dbGet('SELECT * FROM projects WHERE id = ?', [id]);
@@ -195,3 +200,5 @@ export default {
   updateProject,
   deleteProject
 };
+
+

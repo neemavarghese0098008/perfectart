@@ -1,0 +1,17 @@
+import React, { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import { getArticles, getArticle } from '../services/api';
+
+export function BlogList() {
+  const [posts, setPosts] = useState([]); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  useEffect(() => { let alive = true; getArticles().then((data) => alive && setPosts(data)).catch((e) => alive && setError(e.message)).finally(() => alive && setLoading(false)); return () => { alive = false; }; }, []);
+  return <main className="py-5 bg-white-section" style={{ background: '#fff', minHeight: '60vh' }}><div className="container"><header className="text-center py-4"><span className="text-theme">INSIGHTS &amp; IDEAS</span><h1 className="display-5 fw-bold" style={{ color: '#0d2d5c' }}>Our Blogs</h1></header>{loading && <p className="text-center py-5">Loading articles…</p>}{error && <p className="alert alert-danger">Unable to load articles: {error}</p>}{!loading && !error && !posts.length && <p className="text-center py-5">No articles have been published yet.</p>}<div className="row g-4">{posts.map((post) => <article key={post.id} className="col-md-6 col-lg-4"><div className="h-100 p-3 rounded border"><Link to={`/blog/${post.slug}`}><img loading="lazy" src={post.img || '/assets/img/og-image.png'} alt={post.title} className="w-100 rounded" style={{ height: 230, objectFit: 'cover' }} /></Link><p className="mt-3 mb-1 text-muted">{post.date}{post.category ? ` · ${post.category}` : ''}</p><h2 className="h4"><Link className="text-decoration-none" style={{ color: '#0d2d5c' }} to={`/blog/${post.slug}`}>{post.title}</Link></h2><p>{post.excerpt || post.description}</p><Link to={`/blog/${post.slug}`} className="th-btn style3">Read More →</Link></div></article>)}</div></div></main>;
+}
+
+export function BlogDetail() {
+  const { slug } = useParams(); const [posts, setPosts] = useState([]); const [loading, setLoading] = useState(true); const [error, setError] = useState('');
+  useEffect(() => { let alive = true; getArticle(slug).then((data) => alive && setPosts([data])).catch((e) => alive && setError(e.message)).finally(() => alive && setLoading(false)); return () => { alive = false; }; }, [slug]);
+  const post = posts[0];
+  return <main className="py-5 bg-white-section" style={{ background: '#fff', minHeight: '60vh' }}><article className="container" style={{ maxWidth: 920 }}><Link to="/blog">← Back to Blog</Link>{loading ? <p className="text-center py-5">Loading article…</p> : error ? <p className="alert alert-danger">Unable to load article.</p> : !post ? <div className="text-center py-5"><h1>Article not found</h1><Link to="/blog">Browse all articles</Link></div> : <><p className="text-muted mt-4">{post.date}{post.category ? ` · ${post.category}` : ''}</p><h1 className="display-5 fw-bold" style={{ color: '#0d2d5c' }}>{post.title}</h1><img src={post.img || '/assets/img/og-image.png'} alt={post.title} className="w-100 rounded my-4" style={{ maxHeight: 560, objectFit: 'cover' }} /><div className="blog-article-content" style={{ fontSize: '1.08rem', lineHeight: 1.85, color: '#34465e', overflowWrap: 'anywhere' }} dangerouslySetInnerHTML={{ __html: post.content || post.description || '' }} />{post.images?.map((image, i) => <img key={i} loading="lazy" src={image} alt={`${post.title} ${i + 1}`} className="w-100 rounded my-4" />)}</>}</article></main>;
+}
+

@@ -18,8 +18,13 @@ router.get('/category/:category', getProjectsByCategory);
 router.get('/:id', getProjectById);
 
 // Admin protected routes
-router.post('/', requireAuth, upload.single('image'), createProject);
-router.put('/:id', requireAuth, upload.single('image'), updateProject);
+const projectImageFields = upload.fields([
+  { name: 'mainImage', maxCount: 1 },
+  { name: 'image', maxCount: 1 }, // legacy admin clients
+  { name: 'relatedImages', maxCount: 1000 }
+]);
+router.post('/', requireAuth, projectImageFields, createProject);
+router.put('/:id', requireAuth, projectImageFields, updateProject);
 router.delete('/:id', requireAuth, deleteProject);
 
 export default router;

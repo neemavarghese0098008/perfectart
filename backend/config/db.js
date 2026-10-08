@@ -1,66 +1,48 @@
-import sqlite3 from 'sqlite3';
+import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
 import path from 'path';
-import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
-// Ensure data directory exists
-const dataDir = path.resolve(__dirname, '../data');
-if (!fs.existsSync(dataDir)) {
-  fs.mkdirSync(dataDir, { recursive: true });
+const requiredDatabaseSettings = ['DB_HOST', 'DB_PORT', 'DB_NAME', 'DB_USER', 'DB_PASSWORD'];
+const missingDatabaseSettings = requiredDatabaseSettings.filter((setting) => !process.env[setting]);
+
+if (missingDatabaseSettings.length > 0) {
+  throw new Error(`Missing database configuration: ${missingDatabaseSettings.join(', ')}`);
 }
 
-const dbPath = path.resolve(dataDir, 'perfectart.sqlite');
-const verboseSqlite = sqlite3.verbose();
-
-export const db = new verboseSqlite.Database(dbPath, (err) => {
-  if (err) {
-    console.error('Failed to connect to SQLite database:', err.message);
-  } else {
-    console.log(`Connected to SQLite database at ${dbPath}`);
-    // Enable WAL mode for better concurrency
-    db.run('PRAGMA journal_mode = WAL;');
-    db.run('PRAGMA foreign_keys = ON;');
-  }
+export const db = mysql.createPool({
+  host: process.env.DB_HOST,
+  port: Number(process.env.DB_PORT),
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+  multipleStatements: true,
+  waitForConnections: true,
+  connectionLimit: Number(process.env.DB_CONNECTION_LIMIT || 10),
+  queueLimit: 0
 });
 
-// Helper promises for db operations
-export const dbQuery = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.all(sql, params, (err, rows) => {
-      if (err) reject(err);
-      else resolve(rows || []);
-    });
-  });
+export const dbQuery = async (sql, params = []) => {
+  const [rows] = await db.execute(sql, params);
+  return rows;
 };
 
-export const dbGet = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.get(sql, params, (err, row) => {
-      if (err) reject(err);
-      else resolve(row);
-    });
-  });
+export const dbGet = async (sql, params = []) => {
+  const rows = await dbQuery(sql, params);
+  return rows[0];
 };
 
-export const dbRun = (sql, params = []) => {
-  return new Promise((resolve, reject) => {
-    db.run(sql, params, function (err) {
-      if (err) reject(err);
-      else resolve({ lastID: this.lastID, changes: this.changes });
-    });
-  });
+export const dbRun = async (sql, params = []) => {
+  const [result] = await db.execute(sql, params);
+  return { lastID: result.insertId, changes: result.affectedRows };
 };
 
-export const dbExec = (sql) => {
-  return new Promise((resolve, reject) => {
-    db.exec(sql, (err) => {
-      if (err) reject(err);
-      else resolve();
-    });
-  });
+export const dbExec = async (sql) => {
+  await db.query(sql);
 };
 
 export default { db, dbQuery, dbGet, dbRun, dbExec };

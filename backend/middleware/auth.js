@@ -3,8 +3,11 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const JWT_SECRET = process.env.JWT_SECRET || 'perfectart_fallback_secret_key_2025';
+const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be configured in backend/.env');
+}
 export const requireAuth = (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;

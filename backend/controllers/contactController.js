@@ -45,17 +45,17 @@ export const updateContactInfo = async (req, res) => {
         id, address, phone_primary, phone_secondary, email, whatsapp,
         map_iframe_url, facebook_url, twitter_url, linkedin_url, youtube_url, updated_at
       ) VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
-      ON CONFLICT(id) DO UPDATE SET
-        address = excluded.address,
-        phone_primary = excluded.phone_primary,
-        phone_secondary = excluded.phone_secondary,
-        email = excluded.email,
-        whatsapp = excluded.whatsapp,
-        map_iframe_url = excluded.map_iframe_url,
-        facebook_url = excluded.facebook_url,
-        twitter_url = excluded.twitter_url,
-        linkedin_url = excluded.linkedin_url,
-        youtube_url = excluded.youtube_url,
+      ON DUPLICATE KEY UPDATE
+        address = VALUES(address),
+        phone_primary = VALUES(phone_primary),
+        phone_secondary = VALUES(phone_secondary),
+        email = VALUES(email),
+        whatsapp = VALUES(whatsapp),
+        map_iframe_url = VALUES(map_iframe_url),
+        facebook_url = VALUES(facebook_url),
+        twitter_url = VALUES(twitter_url),
+        linkedin_url = VALUES(linkedin_url),
+        youtube_url = VALUES(youtube_url),
         updated_at = CURRENT_TIMESTAMP`,
       [
         address || '',

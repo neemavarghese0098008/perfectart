@@ -4,8 +4,11 @@ import { dbGet, dbRun } from '../config/db.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
-const JWT_SECRET = process.env.JWT_SECRET || 'perfectart_fallback_secret_key_2025';
+const JWT_SECRET = process.env.JWT_SECRET;
 
+if (!JWT_SECRET) {
+  throw new Error('JWT_SECRET must be configured in backend/.env');
+}
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;

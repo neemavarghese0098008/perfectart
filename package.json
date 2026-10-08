@@ -3,22 +3,12 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
+  "workspaces": ["frontend", "adminpanel", "backend"],
   "scripts": {
-    "dev": "vite",
-    "build": "vite build",
-    "preview": "vite preview"
-  },
-  "dependencies": {
-    "lucide-react": "^0.428.0",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "react-router-dom": "^6.26.1",
-    "swiper": "^11.1.10"
-  },
-  "devDependencies": {
-    "@types/react": "^18.3.3",
-    "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
-    "vite": "^5.4.1"
+    "dev:frontend": "npm --prefix frontend run dev",
+    "dev:admin": "npm --prefix adminpanel run dev",
+    "dev:backend": "npm --prefix backend run dev",
+    "build:frontend": "npm --prefix frontend run build",
+    "build:admin": "npm --prefix adminpanel run build"
   }
 }

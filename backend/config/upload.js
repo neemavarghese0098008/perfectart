@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const baseUploadDir = path.resolve(__dirname, '../uploads');
+const baseUploadDir = path.resolve(__dirname, '..', process.env.UPLOAD_DIR || 'uploads');
 
 // Ensure upload subdirectories exist
 ['projects', 'articles', 'gallery', 'general'].forEach(subDir => {
@@ -51,7 +51,10 @@ const fileFilter = (req, file, cb) => {
 export const upload = multer({
   storage,
   limits: {
-    fileSize: 15 * 1024 * 1024 // 15MB limit
+    fileSize: 15 * 1024 * 1024,
+    files: 1001,
+    fields: 100,
+    parts: 1101
   },
   fileFilter
 });
